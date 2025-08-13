@@ -1,0 +1,58 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <html lang="en">
+    <meta charset="UTF-8" />
+    <title>Brands</title>
+
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+    <h1>Add New Item</h1>
+    <form method="POST" action="{% url 'add_item' %}">
+        {% csrf_token %}
+        <input type="text" name="brand" placeholder="Brand" required>
+        <input type="text" name="category" placeholder="Category" required>
+        <input type="text" name="model" placeholder="Model" required>
+        <input type="number" name="quantity" placeholder="Quantity" required>
+        <input type="number" name="price" placeholder="Price" required>
+        <button type="submit">Add</button>
+    </form>
+
+    <hr>
+
+    <form method="GET" style="text-align:center;">
+    <input type="text" name="q" placeholder="Search by brand, category, or model" value="{{ request.GET.q }}">
+    <button type="submit">Search </button>
+    </form>
+
+
+    <h1>Items</h1>
+    <ul>
+        {% for item in items %}
+            <li>
+                {{ item.brand }} - {{ item.category }} - {{ item.model }} - {{ item.quantity }} - ₹{{ item.price }}
+
+                <form method="POST" action="{% url 'update_item' item.id %}"style="display:inline;">
+                    {% csrf_token %}
+                    <input type="text" name="brand" value="{{ item.brand }}" required>
+                    <input type="text" name="category" value="{{ item.category }}" required>
+                    <input type="text" name="model" value="{{ item.model }}" required>
+                    <input type="number" name="quantity" value="{{ item.quantity }}" required>
+                    <input type="number" name="price" value="{{ item.price }}" required>
+                    <button type="submit">Update</button>&nbsp;
+                </form>
+
+                <form method="POST" action="{% url 'delete_item' item.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" onclick="return confirm('Are you sure?');">Delete</button>
+                </form>
+            </li>
+        {% empty %}
+            <li>No items found.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
